@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}{% if mode == 'add' %}Dodaj film{% else %}Edytuj film{% endif %}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h1 class="h4 mb-3">{% if mode == 'add' %}Dodaj film{% else %}Edytuj film{% endif %}</h1>
+        <form method="post">
+          <div class="mb-3">
+            <label class="form-label">Tytuł *</label>
+            <input name="title" class="form-control" maxlength="200" required value="{{ movie.get('title', '') }}">
+          </div>
+          <div class="row">
+            <div class="col-sm-8 mb-3">
+              <label class="form-label">Gatunek</label>
+              <input name="genre" class="form-control" maxlength="100" value="{{ movie.get('genre', '') }}">
+            </div>
+            <div class="col-sm-4 mb-3">
+              <label class="form-label">Rok</label>
+              <input name="year" type="number" min="1888" max="2100" class="form-control" value="{{ movie.get('year', '') }}">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Serwis streamingowy *</label>
+            <select name="service" class="form-select" required>
+              {% for s in services %}
+                <option value="{{ s }}" {% if s == movie.get('service') %}selected{% endif %}>{{ s }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" name="watched" id="watched" {% if movie.get('watched') == 'on' %}checked{% endif %}>
+            <label class="form-check-label" for="watched">Obejrzany</label>
+          </div>
+          <button class="btn btn-primary">Zapisz</button>
+          <a class="btn btn-outline-secondary" href="{{ url_for('index') }}">Anuluj</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

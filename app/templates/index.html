@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+<form class="row g-2 align-items-end mb-3" method="get">
+  <div class="col-sm-4">
+    <label class="form-label small mb-1">Serwis</label>
+    <select name="service" class="form-select">
+      <option value="">Wszystkie</option>
+      {% for s in services %}
+        <option value="{{ s }}" {% if s == f_service %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-sm-4">
+    <label class="form-label small mb-1">Status</label>
+    <select name="status" class="form-select">
+      <option value="">Wszystkie</option>
+      <option value="unwatched" {% if f_status == 'unwatched' %}selected{% endif %}>Do obejrzenia</option>
+      <option value="watched" {% if f_status == 'watched' %}selected{% endif %}>Obejrzane</option>
+    </select>
+  </div>
+  <div class="col-sm-4 d-flex gap-2">
+    <button class="btn btn-primary">Filtruj</button>
+    <a class="btn btn-outline-secondary" href="{{ url_for('index') }}">Wyczyść</a>
+  </div>
+</form>
+
+{% if movies %}
+<div class="table-responsive">
+  <table class="table table-hover bg-white align-middle shadow-sm">
+    <thead class="table-light">
+      <tr><th>Tytuł</th><th>Gatunek</th><th>Rok</th><th>Serwis</th><th>Status</th><th class="text-end">Akcje</th></tr>
+    </thead>
+    <tbody>
+    {% for m in movies %}
+      <tr class="{% if m[5] %}text-muted{% endif %}">
+        <td class="fw-semibold">{{ m[1] }}</td>
+        <td>{{ m[2] or '–' }}</td>
+        <td>{{ m[3] or '–' }}</td>
+        <td><span class="badge text-bg-secondary">{{ m[4] }}</span></td>
+        <td>
+          <form method="post" action="{{ url_for('toggle', movie_id=m[0]) }}">
+            <button class="btn btn-sm {% if m[5] %}btn-success{% else %}btn-outline-warning{% endif %}">
+              {% if m[5] %}✔ Obejrzany{% else %}Do obejrzenia{% endif %}
+            </button>
+          </form>
+        </td>
+        <td class="text-end text-nowrap">
+          <a class="btn btn-sm btn-outline-primary" href="{{ url_for('edit', movie_id=m[0]) }}">Edytuj</a>
+          <form class="d-inline" method="post" action="{{ url_for('delete', movie_id=m[0]) }}"
+                onsubmit="return confirm('Usunąć ten film?');">
+            <button class="btn btn-sm btn-outline-danger">Usuń</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+<p class="small text-muted">Filmów na liście: {{ movies|length }}</p>
+{% else %}
+<div class="text-center text-muted py-5">
+  <p class="fs-5">Brak filmów na liście.</p>
+  <a class="btn btn-primary" href="{{ url_for('add') }}">Dodaj pierwszy film</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,30 @@
+# Tylko do szybkiego testu aplikacji lokalnie (przed Kubernetesem):
+#   docker compose up --build   ->  http://localhost:8000
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: filmy
+      POSTGRES_USER: filmy
+      POSTGRES_PASSWORD: lokalne-haslo
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: ./app
+      args:
+        APP_VERSION: v1
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: db
+      DB_NAME: filmy
+      DB_USER: filmy
+      DB_PASSWORD: lokalne-haslo
+      SECRET_KEY: lokalny-klucz
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
